@@ -16,7 +16,7 @@ demo:
 
 usage:
 
-	Syntax:	limit_req_zone key zone=name:size rate=rate;
+	Syntax:	limit_proxy_req_zone key zone=name:size rate=rate;
 	Default:	—
 	Context:	http
 
@@ -25,7 +25,7 @@ usage:
     rate: 为默认的限速值，如果limit_req 没设置rate的话，则改值生效
 
 
-	Syntax:	limit_req zone=name lim_key [rate] brust;
+	Syntax:	limit_proxy_req zone=name lim_key [rate] brust;
 	Default:	—
 	Context:	location
 
