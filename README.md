@@ -11,7 +11,6 @@ demo:
 			limit_req zone=one lim_key=xxxx&test rate=1000r/s burst=1200 ;
 			limit_req zone=one lim_key=yyyy&test2 burst=2 ; #rate will be 20r/s
 			limit_req zone=one lim_key=zzzz&testing rate=2000r/s burst=2200;
-			
 		}
 	}
 
@@ -21,8 +20,9 @@ usage:
 	Default:	—
 	Context:	http
 
-	key：从url中获取的参数，可以设置多个。 zone为共享内存名字，size为内存大小，rate 为默认的限速值，如果limit_req 没设置
-	rate的话，则改值生效
+	key：从url中获取的参数，可以设置多个。
+    zone:为共享内存名字，size为内存大小，
+    rate: 为默认的限速值，如果limit_req 没设置rate的话，则改值生效
 
 
 	Syntax:	limit_req zone=name lim_key [rate] brust;
