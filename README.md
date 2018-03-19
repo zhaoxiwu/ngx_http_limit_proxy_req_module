@@ -29,7 +29,8 @@ usage:
 	Default:	—
 	Context:	location
 
-	zone:共享内存名字，标记从哪个共享内存取数据; lim_key：需要限速的关键字组合，多个关键字用&隔开；
+	zone:共享内存名字，标记从哪个共享内存取数据;
+    lim_key：需要限速的关键字组合，多个关键字用&隔开；
 	rate：关键字对应的请求平均速度，brust：峰值
 
 	限速算法：if（正在处理请求数 - rate*时间 + 1 ）> brust 则返回503。
