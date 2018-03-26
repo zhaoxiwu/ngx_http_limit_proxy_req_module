@@ -67,6 +67,8 @@ typedef struct {
     ngx_uint_t                   status_code;        //返回状态码
 } ngx_http_limit_proxy_req_conf_t;
 
+static ngx_str_t  d_l_key = ngx_string("default_lim_key");
+
 //在红黑树中查找该次请求是否超流量限制
 static ngx_int_t ngx_http_limit_proxy_req_lookup(ngx_http_limit_proxy_req_limit_t *limit,
 		uint32_t hash, ngx_uint_t *ep,ngx_http_request_t *r,ngx_int_t len);
@@ -176,7 +178,7 @@ ngx_http_limit_proxy_req_handler(ngx_http_request_t *r)
 {
     //size_t                       len;
     uint32_t                     hash;
-    ngx_int_t                    rc, total_len;
+    ngx_int_t                    rc, total_len, result;
     ngx_uint_t                   n, excess;
     //ngx_http_variable_value_t   *vv;
     ngx_http_limit_proxy_req_ctx_t    *ctx;
@@ -198,23 +200,29 @@ ngx_http_limit_proxy_req_handler(ngx_http_request_t *r)
 #if (NGX_SUPPRESS_WARN)
     limit = NULL;
 #endif
-
+    reslt = 1;
     for (n = 0; n < lrcf->limits.nelts; n++) {
 
         limit = &limits[n];
-
         ctx = limit->shm_zone->data;
 	// find lim_key match req variable
 	data = limit->prate.lim_key.data;
-        last = limit->prate.lim_key.data + limit->prate.lim_key.len;	
-	ngx_int_t result = ngx_http_limit_proxy_req_var_compare(r, ctx, data, last);
+        last = limit->prate.lim_key.data + limit->prate.lim_key.len;
 
-	if (result){
-	    continue;
-	}
+        //检查是否是默认lim_key, 且只有最后一个有效
+        if(n+1 = lrcf->limits.nelts){
+          result = ngx_strcmp(limit->prate.lim_key, d_l_key);
+        }
 
-	// find or add node in rbtree
-	ngx_crc32_init(hash);
+        if(result){
+          result = ngx_http_limit_proxy_req_var_compare(r, ctx, data, last);
+
+          if (result){
+            continue;
+          }
+        }
+        // find or add node in rbtree
+        ngx_crc32_init(hash);
 
         total_len = ngx_http_limit_req_copy_variables(r, &hash, ctx, NULL);
         if (total_len == 0) {
@@ -1036,10 +1044,11 @@ ngx_http_limit_proxy_req(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
     }
 
     if (lim_key.len == 0) {
-        ngx_conf_log_error(NGX_LOG_EMERG, cf, 0,
-                        "\"%V\" must have \"lim_key\" parameter",    
-			&cmd->name);
-        return NGX_CONF_ERROR;
+        //ngx_conf_log_error(NGX_LOG_EMERG, cf, 0,
+        //                "\"%V\" must have \"lim_key\" parameter",
+	//		&cmd->name);
+        //return NGX_CONF_ERROR;
+        lim_key = d_l_key;
     }
 
     limits = lrcf->limits.elts;
