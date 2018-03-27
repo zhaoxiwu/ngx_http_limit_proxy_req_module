@@ -13,6 +13,7 @@ demo:
 			limit_proxy_req zone=one lim_key=xxxx&test rate=1000r/s burst=1200 ;
 			limit_proxy_req zone=one lim_key=yyyy&test2 burst=2 ; #rate will be 20r/s
 			limit_proxy_req zone=one lim_key=zzzz&testing rate=2000r/s burst=2200;
+			limit_proxy_req zone=one lim_key=* burst=2200;
 		}
 	}
 
@@ -32,7 +33,7 @@ usage:
 	Context:	location
 
 	zone:共享内存名字，标记从哪个共享内存取数据;
-    lim_key：需要限速的关键字组合，多个关键字用&隔开；
+    lim_key：需要限速的关键字组合，多个关键字用&隔开, "*" 使用默认策略，必须放到最后
 	rate：关键字对应的请求平均速度，brust：峰值
 
     其他指令同limit_req 模块。
