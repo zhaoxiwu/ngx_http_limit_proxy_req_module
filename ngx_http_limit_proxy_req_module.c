@@ -67,7 +67,6 @@ typedef struct {
     ngx_uint_t                   status_code;        //返回状态码
 } ngx_http_limit_proxy_req_conf_t;
 
-static ngx_str_t  d_l_key = ngx_string("default_lim_key");
 
 //在红黑树中查找该次请求是否超流量限制
 static ngx_int_t ngx_http_limit_proxy_req_lookup(ngx_http_limit_proxy_req_limit_t *limit,
@@ -210,8 +209,8 @@ ngx_http_limit_proxy_req_handler(ngx_http_request_t *r)
         last = limit->prate.lim_key.data + limit->prate.lim_key.len;
 
         //检查是否是默认lim_key, 且只有最后一个有效
-        if(n+1 = lrcf->limits.nelts){
-          result = ngx_strcmp(limit->prate.lim_key, d_l_key);
+        if(n+1 == lrcf->limits.nelts){
+          result = ngx_strcmp(data, "*");
         }
 
         if(result){
@@ -1044,11 +1043,10 @@ ngx_http_limit_proxy_req(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
     }
 
     if (lim_key.len == 0) {
-        //ngx_conf_log_error(NGX_LOG_EMERG, cf, 0,
-        //                "\"%V\" must have \"lim_key\" parameter",
-	//		&cmd->name);
-        //return NGX_CONF_ERROR;
-        lim_key = d_l_key;
+        ngx_conf_log_error(NGX_LOG_EMERG, cf, 0,
+                        "\"%V\" must have \"lim_key\" parameter",
+			&cmd->name);
+        return NGX_CONF_ERROR;
     }
 
     limits = lrcf->limits.elts;
