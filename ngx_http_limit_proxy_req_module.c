@@ -199,7 +199,7 @@ ngx_http_limit_proxy_req_handler(ngx_http_request_t *r)
 #if (NGX_SUPPRESS_WARN)
     limit = NULL;
 #endif
-    reslt = 1;
+    result = 1;
     for (n = 0; n < lrcf->limits.nelts; n++) {
 
         limit = &limits[n];
