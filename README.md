@@ -43,17 +43,16 @@ usage:
 
 具体限流逻辑：
 
-
 配置示例：
-
-limit_req_zone $binary_remote_addr zone=one:10m rate=100r/s;
-
-location /search/ {
-
-	limit_req zone=one burst=5;
-
-}
-
+	
+	limit_req_zone $binary_remote_addr zone=one:10m rate=100r/s;
+	
+	location /search/ {
+	
+		limit_req zone=one burst=5;
+	
+	}
+	
 解释：rate=100r/s;   每10毫秒（rate/1000）生成一个令牌；burst=5，意思是最多能积攒5个令牌备用。
 
 
